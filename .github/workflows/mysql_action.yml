@@ -10,8 +10,9 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: Secret5555
           MYSQL_DATABASE: mysql
+          MYSQL_USER:    nidhun
+          MYSQL_PASSWORD: pass
         ports:
           - 3306:3306
         options: >-
@@ -20,28 +21,46 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
+    env:
+      DB_HOST:      127.0.0.1
+      DB_PORT:      3306
+      DB_USER:      nidhun
+      DB_PASSWORD:  pass
+      DB_NAME:      mysql
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
 
-      - name: Wait for MySQL to be ready
+      - name: Wait for MySQL to be healthy
         run: |
-          echo "Waiting for MySQL to be healthy…"
-          for i in {1..30}; do
-            if docker inspect --format='{{.State.Health.Status}}' ${{ job.services.mysql.id }} | grep -q healthy; then
-              echo "MySQL is up!"
-              break
-            fi
+          echo "Waiting for MySQL to be ready…"
+          until mysqladmin ping -h "$DB_HOST" --silent; do
             sleep 5
           done
 
       - name: Install MySQL client
         run: sudo apt-get update && sudo apt-get install -y mysql-client
 
-      - name: Deploy to Database
+      - name: Deploy schema
         run: |
           mysql \
-            --host=127.0.0.1 \
-            --user=root \
-            --password=$MYSQL_ROOT_PASSWORD \
-            mysql < create_projects_table.sql
+            -h"$DB_HOST" \
+            -P"$DB_PORT" \
+            -u"$DB_USER" \
+            -p"$DB_PASSWORD" \
+          < create_projects_table.sql
+
+      - name: Verify schema
+        run: |
+          echo "Verifying that projectdb and projects table exist…"
+          mysql \
+            -h"$DB_HOST" \
+            -P"$DB_PORT" \
+            -u"$DB_USER" \
+            -p"$DB_PASSWORD" <<EOF
+          SHOW DATABASES LIKE 'projectdb';
+          USE projectdb;
+          SHOW TABLES;
+          DESCRIBE projects;
+          EOF
