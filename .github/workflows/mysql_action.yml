@@ -26,7 +26,7 @@ jobs:
       DB_PORT:      3306
       DB_USER:      nidhun
       DB_PASSWORD:  pass
-      DB_NAME:      mysql
+      DB_NAME:      testdb
 
     steps:
       - name: Check out repository
