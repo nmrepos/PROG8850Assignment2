@@ -1,4 +1,4 @@
-name: Mysql actions demo
+name: Question 1
 run-name: ${{ github.actor }} is testing out Mysql GitHub Actions 🚀
 on: [push]
 jobs:
