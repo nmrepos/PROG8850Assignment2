@@ -38,4 +38,4 @@ jobs:
           MYSQL_USER:     root
           MYSQL_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
           MYSQL_DATABASE: companydb
-        run: python execute_sql_scripts.py
+        run: python q1script.py
