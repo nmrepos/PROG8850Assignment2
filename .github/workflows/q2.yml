@@ -1,9 +1,11 @@
-name: Question 1
+name: Question 2 - Database CI/CD Pipeline
 
-on: [push]
+on:
+  push:
+    branches: [ main, question2 ]
 
 jobs:
-  question1:
+  deploy-to-azure:
     runs-on: ubuntu-latest
     
     steps:
@@ -30,11 +32,13 @@ jobs:
     - name: Wait for MySQL to start
       run: |
         sleep 15
-        
-    - name: Execute SQL scripts
+
+    - name: Deploy to Azure MySQL
+      if: success()
       env:
-        MYSQL_HOST: 'localhost'
-        MYSQL_USER: 'root'
-        MYSQL_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-        MYSQL_DATABASE: 'companydb'
-      run: python q1script.py
+        AZURE_MYSQL_HOST: ${{ secrets.AZURE_MYSQL_HOST }}
+        AZURE_MYSQL_USER: ${{ secrets.AZURE_MYSQL_USER }}
+        AZURE_MYSQL_PASSWORD: ${{ secrets.AZURE_MYSQL_PASSWORD }}
+        AZURE_MYSQL_DATABASE: 'companydb'
+      run:
+        python script.py
