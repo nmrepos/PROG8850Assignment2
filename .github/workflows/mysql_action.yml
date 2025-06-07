@@ -1,41 +1,40 @@
-name: CI
+name: Question 1
 
 on: [push]
 
 jobs:
-  schema:
+  deploy:
     runs-on: ubuntu-latest
-
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-          MYSQL_DATABASE:      companydb
-          # <-- allow root connections from any host (i.e. your runner container)
-          MYSQL_ROOT_HOST:     '%'
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h localhost"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-
+    
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Wait for MySQL to be healthy
-        run: |
-          until mysqladmin ping -h 127.0.0.1 --silent; do
-            echo 'Waiting for MySQL…'
-            sleep 2
-          done
-
-      - name: Execute SQL scripts
-        env:
-          MYSQL_HOST:     127.0.0.1
-          MYSQL_USER:     root
-          MYSQL_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-          MYSQL_DATABASE: companydb
-        run: python q1script.py
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install mysql-connector-python
+        
+    - name: Set up MySQL
+      uses: mirromutth/mysql-action@v1.1
+      with:
+        mysql version: '8.0'
+        mysql database: 'companydb'
+        mysql root password: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+        
+    - name: Wait for MySQL to start
+      run: |
+        sleep 15
+        
+    - name: Execute SQL scripts
+      env:
+        MYSQL_HOST: 'localhost'
+        MYSQL_USER: 'root'
+        MYSQL_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+        MYSQL_DATABASE: 'companydb'
+      run: python q1script.py
