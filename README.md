@@ -92,9 +92,10 @@ connection.close()
 
 ## Screenshot 1 – Running the Python Automation Script
 ![Screenshots1](/screenshots/Screenshot1.png)
+![Screenshots2](/screenshots/Screenshot2.png)
 
 ## Screenshot 2 – Verifying the mycompany Database
-![Screenshots2](/screenshots/Screenshot2.png)
+![Screenshots3](/screenshots/Screenshot3.png)
 
 
 Author : Nidhun Murali - 8981611
