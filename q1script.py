@@ -25,21 +25,20 @@ commands = sql_script.split(';')
 for command in commands:
     command = command.strip()
     if command:
-        print(f"Running: {command}")
+        print(f"\nRunning: {command}\n")
         cursor.execute(command)
 
 
             
 # Commit changes
 connection.commit()
-print("All SQL scripts executed successfully!")
+print("All SQL scripts executed successfully ✅!")
 
 
-print("\nVerifying `projects` table structure:")
+print("\nVerifying `projects` table structure:\n")
 cursor.execute("DESCRIBE projects;")
 for row in cursor.fetchall():
     print(row)
-
 
 # Close connection
 cursor.close()
