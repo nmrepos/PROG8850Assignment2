@@ -13,7 +13,7 @@ connection = mysql.connector.connect(
 cursor = connection.cursor()
 
 # Path to the single SQL file
-sql_file = '../create_projects_table.sql'
+sql_file = './create_projects_table.sql'
 print(f"Executing {sql_file}")
 
 with open(sql_file, 'r') as file:
