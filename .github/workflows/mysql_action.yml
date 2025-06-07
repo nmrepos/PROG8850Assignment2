@@ -1,9 +1,6 @@
 name: Question 1
-
-on:
-  push:
-    branches: [ main ]
-
+run-name: ${{ github.actor }} is testing out Mysql GitHub Actions 🚀
+on: [push]
 jobs:
   migrate:
     runs-on: ubuntu-latest
