@@ -64,4 +64,4 @@ jobs:
           USE projectdb;
           SHOW TABLES;
           DESCRIBE projects;
-EOF
+          EOF
