@@ -1,67 +1,48 @@
 name: Question 1
-run-name: ${{ github.actor }} is testing out MySQL GitHub Actions 🚀
-on: [push]
+
+on:
+  push:
+    branches: [ main ]
 
 jobs:
-  setup_mysql_database:
+  migrate:
     runs-on: ubuntu-latest
-
     services:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: rootpw
-          MYSQL_DATABASE: mysql
-          MYSQL_USER:    ghuser
-          MYSQL_PASSWORD: ghpw
+          MYSQL_ROOT_PASSWORD: password123
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h localhost --silent"
+          --health-cmd="mysqladmin ping -h127.0.0.1 -uroot -ppassword123"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
 
     env:
-      DB_HOST:      127.0.0.1
-      DB_PORT:      3306
-      DB_USER:      ghuser
-      DB_PASSWORD:  ghpw
-      DB_NAME:      projectdb
+      MYSQL_HOST:     127.0.0.1
+      MYSQL_USER:     root
+      MYSQL_PASSWORD: password123
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
+      - name: Check out code
+        uses: actions/checkout@v3
 
       - name: Wait for MySQL to be healthy
         run: |
-          echo "Waiting for MySQL to be ready…"
-          until mysqladmin ping -h "$DB_HOST" --silent; do
+          until mysqladmin ping -h"$MYSQL_HOST" -u"$MYSQL_USER" -p"$MYSQL_PASSWORD"; do
+            echo "Waiting for MySQL…"
             sleep 5
           done
 
-      - name: Install MySQL client
-        run: sudo apt-get update && sudo apt-get install -y mysql-client
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
 
-      - name: Deploy schema
-        run: |
-          mysql \
-            -h"$DB_HOST" \
-            -P"$DB_PORT" \
-            -u"$DB_USER" \
-            -p"$DB_PASSWORD" \
-          < create_projects_table.sql
+      - name: Install dependencies
+        run: pip install mysql-connector-python
 
-      - name: Verify schema
-        run: |
-          echo "Verifying that projectdb and projects table exist…"
-          mysql \
-            -h"$DB_HOST" \
-            -P"$DB_PORT" \
-            -u"$DB_USER" \
-            -p"$DB_PASSWORD" <<EOF
-          SHOW DATABASES LIKE 'projectdb';
-          USE projectdb;
-          SHOW TABLES;
-          DESCRIBE projects;
-          EOF
+      - name: Run migrations
+        run: python q1script.py
