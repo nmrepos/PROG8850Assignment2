@@ -12,28 +12,33 @@ connection = mysql.connector.connect(
 
 cursor = connection.cursor()
 
-# Find all SQL files in the sql directory
-sql_files = glob.glob('../create_projects_table.sql')
-
-for sql_file in sql_files:
-    print(f"Executing {sql_file}")
-    with open(sql_file, 'r') as file:
-        sql_script = file.read()
-        
-    # Split script into commands
-    commands = sql_script.split(';')
+# Find the SQL file in the  directory
+sql_file = glob.glob('../create_projects_table.sql')
+print(f"Executing {sql_file}")
+with open(sql_file, 'r') as file:
+    sql_script = file.read()
     
-    for command in commands:
-        command = command.strip()
-        if command:
-            print(f"Running: {command}")
-            cursor.execute(command)
+# Split script into commands
+commands = sql_script.split(';')
+
+for command in commands:
+    command = command.strip()
+    if command:
+        print(f"Running: {command}")
+        cursor.execute(command)
+
             
 # Commit changes
 connection.commit()
+print("All SQL scripts executed successfully!")
+
+
+print("\nVerifying `projects` table structure:")
+cursor.execute("DESCRIBE projects;")
+for row in cursor.fetchall():
+    print(row)
+
 
 # Close connection
 cursor.close()
 connection.close()
-
-print("All SQL scripts executed successfully!")
