@@ -2,12 +2,12 @@ import mysql.connector
 import os
 import glob
 
-# Connect to MySQL
+# Connect to Azure MySQL
 connection = mysql.connector.connect(
-    host=os.environ['MYSQL_HOST'],
-    user=os.environ['MYSQL_USER'],
-    password=os.environ['MYSQL_PASSWORD'],
-    database=os.environ['MYSQL_DATABASE']
+    host=os.environ['AZURE_MYSQL_HOST'],
+    user=os.environ['AZURE_MYSQL_USER'],
+    password=os.environ['AZURE_MYSQL_PASSWORD'],
+    database=os.environ['AZURE_MYSQL_DATABASE']
 )
 
 cursor = connection.cursor()
@@ -16,7 +16,7 @@ cursor = connection.cursor()
 sql_files = glob.glob('sql/*.sql')
 
 for sql_file in sql_files:
-    print(f"Executing {sql_file}")
+    print(f"Executing {sql_file} on Azure MySQL")
     with open(sql_file, 'r') as file:
         sql_script = file.read()
         
@@ -36,4 +36,4 @@ connection.commit()
 cursor.close()
 connection.close()
 
-print("All SQL scripts executed successfully!")
+print("All SQL scripts executed successfully on Azure MySQL!")
