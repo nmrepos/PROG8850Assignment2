@@ -1,0 +1,44 @@
+name: Question 2 - Database CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, question2 ]
+
+jobs:
+  deploy-to-azure:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install mysql-connector-python
+        
+    - name: Set up MySQL
+      uses: mirromutth/mysql-action@v1.1
+      with:
+        mysql version: '8.0'
+        mysql database: 'companydb'
+        mysql root password: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+        
+    - name: Wait for MySQL to start
+      run: |
+        sleep 15
+
+    - name: Deploy to Azure MySQL
+      if: success()
+      env:
+        AZURE_MYSQL_HOST: ${{ secrets.AZURE_MYSQL_HOST }}
+        AZURE_MYSQL_USER: ${{ secrets.AZURE_MYSQL_USER }}
+        AZURE_MYSQL_PASSWORD: ${{ secrets.AZURE_MYSQL_PASSWORD }}
+        AZURE_MYSQL_DATABASE: 'companydb'
+      run:
+        python script.py
