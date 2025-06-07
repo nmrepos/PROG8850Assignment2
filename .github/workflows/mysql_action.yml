@@ -10,9 +10,10 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
+          MYSQL_ROOT_PASSWORD: rootpw
           MYSQL_DATABASE: mysql
-          MYSQL_USER:    nidhun
-          MYSQL_PASSWORD: pass
+          MYSQL_USER:    ghuser
+          MYSQL_PASSWORD: ghpw
         ports:
           - 3306:3306
         options: >-
@@ -24,9 +25,9 @@ jobs:
     env:
       DB_HOST:      127.0.0.1
       DB_PORT:      3306
-      DB_USER:      nidhun
-      DB_PASSWORD:  pass
-      DB_NAME:      testdb
+      DB_USER:      ghuser
+      DB_PASSWORD:  ghpw
+      DB_NAME:      projectdb
 
     steps:
       - name: Check out repository
@@ -63,4 +64,4 @@ jobs:
           USE projectdb;
           SHOW TABLES;
           DESCRIBE projects;
-          EOF
+EOF
