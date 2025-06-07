@@ -12,12 +12,13 @@ connection = mysql.connector.connect(
 
 cursor = connection.cursor()
 
-# Find the SQL file in the  directory
-sql_file = glob.glob('../create_projects_table.sql')
+# Path to the single SQL file
+sql_file = '../create_projects_table.sql'
 print(f"Executing {sql_file}")
+
 with open(sql_file, 'r') as file:
     sql_script = file.read()
-    
+
 # Split script into commands
 commands = sql_script.split(';')
 
@@ -26,6 +27,7 @@ for command in commands:
     if command:
         print(f"Running: {command}")
         cursor.execute(command)
+
 
             
 # Commit changes

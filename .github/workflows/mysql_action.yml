@@ -3,7 +3,7 @@ name: Question 1
 on: [push]
 
 jobs:
-  deploy:
+  question1:
     runs-on: ubuntu-latest
     
     steps:
